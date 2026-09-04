@@ -1,0 +1,806 @@
+<title>FreeTradeAgreement</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,420;9..144,520;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#eef1ec;
+    --paper-raised:#ffffff;
+    --ink-900:#171b22;
+    --ink-600:#4c5560;
+    --ink-400:#868f98;
+    --line:#d7dbd2;
+    --line-soft:#e3e6de;
+    --accent:#177a54;
+    --accent-ink:#0d5d3f;
+    --accent-soft:#dfeee7;
+    --eu:#125a99;
+    --eu-soft:#e3ebf3;
+    --india:#b54708;
+    --india-soft:#f5e6d8;
+    --status-good:#177a54;
+    --status-phased:#a9720f;
+    --status-tbc:#6c7580;
+    --status-protected:#8a8f97;
+    --focus:#177a54;
+    --shadow: 0 1px 2px rgba(23,27,34,0.05), 0 8px 24px -12px rgba(23,27,34,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12161b;
+      --paper-raised:#1a2027;
+      --ink-900:#eceeea;
+      --ink-600:#aeb5bd;
+      --ink-400:#7c848d;
+      --line:#2c333c;
+      --line-soft:#242b33;
+      --accent:#3a9c7d;
+      --accent-ink:#8fd8bd;
+      --accent-soft:#1c2f28;
+      --eu:#3c85c2;
+      --eu-soft:#1d2a37;
+      --india:#c56d2c;
+      --india-soft:#33251a;
+      --status-good:#3a9c7d;
+      --status-phased:#c0871f;
+      --status-tbc:#8b93a5;
+      --status-protected:#88919c;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161b;
+    --paper-raised:#1a2027;
+    --ink-900:#eceeea;
+    --ink-600:#aeb5bd;
+    --ink-400:#7c848d;
+    --line:#2c333c;
+    --line-soft:#242b33;
+    --accent:#49b18e;
+    --accent-ink:#8fd8bd;
+    --accent-soft:#1c2f28;
+    --eu:#7fb0dc;
+    --eu-soft:#1d2a37;
+    --india:#e58b4e;
+    --india-soft:#33251a;
+    --status-good:#49b18e;
+    --status-phased:#d8a13e;
+    --status-tbc:#8b93a5;
+    --status-protected:#88919c;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink-900);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',Georgia,serif;
+    text-wrap:balance;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--accent-soft);}
+
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- header ---------- */
+  header.site{
+    border-bottom:1px solid var(--line);
+    padding:22px 0 20px;
+  }
+  .site-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .wordmark{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .wordmark .mark{
+    width:30px;height:30px;
+    border:1.5px solid var(--ink-900);
+    border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono';
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:-0.02em;
+    transform:rotate(-4deg);
+  }
+  .wordmark h1{font-size:22px;font-weight:520;}
+  .wordmark h1 .tld{
+    color:var(--accent-ink);
+    font-family:'IBM Plex Mono';
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0;
+    margin-left:1px;
+  }
+  .site-tagline{
+    font-size:13px;
+    color:var(--ink-400);
+    font-family:'IBM Plex Mono';
+    letter-spacing:0.01em;
+  }
+  .lede{
+    max-width:62ch;
+    margin-top:14px;
+    font-size:15.5px;
+    line-height:1.6;
+    color:var(--ink-600);
+  }
+  .lede strong{color:var(--ink-900);font-weight:600;}
+
+  /* ---------- stat strip ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    margin-top:20px;
+  }
+  .stat{
+    background:var(--paper-raised);
+    padding:14px 16px;
+  }
+  .stat .num{
+    font-family:'IBM Plex Mono';
+    font-size:22px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    color:var(--accent-ink);
+  }
+  .stat .lbl{
+    font-size:11.5px;
+    color:var(--ink-400);
+    margin-top:3px;
+    line-height:1.35;
+  }
+
+  /* ---------- controls ---------- */
+  .controls{
+    position:sticky;top:0;z-index:20;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding:16px 0;
+  }
+  .controls-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .pov-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-400);
+    font-family:'IBM Plex Mono';
+  }
+  .pov-toggle{
+    display:inline-flex;
+    border:1.5px solid var(--ink-900);
+    border-radius:999px;
+    padding:3px;
+    gap:2px;
+    background:var(--paper-raised);
+  }
+  .pov-toggle button{
+    appearance:none;border:none;background:transparent;
+    padding:7px 18px;
+    border-radius:999px;
+    font-family:'IBM Plex Mono';
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    color:var(--ink-600);
+    transition:background .18s ease, color .18s ease;
+  }
+  .pov-toggle button.active{
+    color:#fff;
+  }
+  .pov-toggle button[data-pov="india"].active{background:var(--india);}
+  .pov-toggle button[data-pov="eu"].active{background:var(--eu);}
+  .pov-toggle button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  .country-select-wrap{
+    display:flex;align-items:center;gap:8px;
+    max-width:0;opacity:0;overflow:hidden;
+    transition:max-width .28s ease, opacity .2s ease;
+  }
+  .country-select-wrap.shown{max-width:520px;opacity:1;}
+  select.country-select{
+    font-family:'IBM Plex Sans';
+    font-size:13.5px;
+    font-weight:500;
+    padding:7px 30px 7px 12px;
+    border-radius:7px;
+    border:1.5px solid var(--line);
+    background:var(--paper-raised) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M0 0L5 6L10 0Z" fill="%23868f98"/></svg>') no-repeat right 10px center;
+    appearance:none;
+    color:var(--ink-900);
+    cursor:pointer;
+  }
+  select.country-select:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
+
+  .focus-toggle{
+    display:none;
+    align-items:center;gap:7px;
+    font-size:13px;color:var(--ink-600);
+    cursor:pointer;
+    user-select:none;
+  }
+  .focus-toggle.shown{display:inline-flex;}
+  .focus-toggle input{accent-color:var(--eu);width:15px;height:15px;}
+
+  .legend{
+    margin-left:auto;
+    display:flex;gap:16px;flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:6px;
+    font-size:12px;color:var(--ink-400);
+    font-family:'IBM Plex Mono';
+  }
+  .legend-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+
+  /* ---------- country note ---------- */
+  .country-note{
+    margin:18px 0 0;
+    padding:12px 16px;
+    border:1px solid var(--eu-soft);
+    background:var(--eu-soft);
+    border-radius:8px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--ink-600);
+    display:none;
+  }
+  .country-note.shown{display:block;}
+  .country-note b{color:var(--ink-900);}
+  .country-note .fine{
+    display:block;margin-top:6px;font-size:12px;color:var(--ink-400);
+  }
+
+  /* ---------- groups ---------- */
+  main{padding:28px 0 64px;}
+  .group{margin-top:38px;}
+  .group:first-child{margin-top:26px;}
+  .group-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:14px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .group-head h2{font-size:18px;font-weight:520;}
+  .group-count{
+    font-family:'IBM Plex Mono';
+    font-size:12px;
+    color:var(--ink-400);
+  }
+  .group-desc{
+    font-size:12.5px;color:var(--ink-400);margin-left:auto;
+    max-width:36ch;text-align:right;
+  }
+
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  @media (max-width:760px){ .card-grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px 14px;
+    transition:opacity .2s ease, border-color .2s ease;
+  }
+  .card.dim{opacity:0.38;}
+  .card.emph{border-color:var(--eu);}
+  :root[data-theme] .card.emph, .card.emph{box-shadow:0 0 0 1px var(--eu) inset;}
+
+  .card-top{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  }
+  .card-title{display:flex;align-items:center;gap:9px;}
+  .hs-tag{
+    font-family:'IBM Plex Mono';
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--ink-400);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:2px 5px;
+    white-space:nowrap;
+  }
+  .card-title h3{font-size:15.5px;font-weight:560;line-height:1.25;}
+  .flow-tag{
+    font-family:'IBM Plex Mono';
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    padding:3px 7px;
+    border-radius:5px;
+    white-space:nowrap;
+  }
+  .flow-tag.india{color:var(--india);background:var(--india-soft);}
+  .flow-tag.eu{color:var(--eu);background:var(--eu-soft);}
+  .flow-tag.both{color:var(--accent-ink);background:var(--accent-soft);}
+
+  .card-body{font-size:13px;line-height:1.55;color:var(--ink-600);margin-top:8px;}
+
+  .chart-wrap{margin-top:12px;}
+  .chart-wrap svg{width:100%;height:auto;display:block;}
+  .chart-caption{
+    display:flex;gap:16px;
+    font-family:'IBM Plex Mono';
+    font-size:10.5px;color:var(--ink-400);
+    margin-top:2px;
+  }
+  .chart-caption span{display:flex;align-items:center;gap:5px;}
+  .chart-caption .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+
+  .timing-row{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:12px;
+    padding-top:10px;
+    border-top:1px solid var(--line-soft);
+  }
+  .pill{
+    font-family:'IBM Plex Mono';
+    font-size:11px;font-weight:600;
+    padding:4px 9px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .pill.good{color:#fff;background:var(--status-good);}
+  .pill.phased{color:#fff;background:var(--status-phased);}
+  .pill.tbc{color:var(--status-tbc);background:transparent;border:1px solid var(--line);}
+  .pill.protected{color:var(--status-protected);background:transparent;border:1px solid var(--line);}
+  .card-priority{font-size:11px;color:var(--ink-400);}
+
+  .qual-status{
+    margin-top:12px;
+    display:flex;align-items:center;gap:8px;
+    padding-top:10px;border-top:1px solid var(--line-soft);
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:26px 0 40px;
+    font-size:12.5px;
+    color:var(--ink-400);
+    line-height:1.7;
+  }
+  footer h3{font-size:12px;color:var(--ink-600);text-transform:uppercase;letter-spacing:0.06em;font-family:'IBM Plex Mono';margin-bottom:8px;font-weight:600;}
+  footer .foot-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:32px;}
+  @media (max-width:700px){footer .foot-grid{grid-template-columns:1fr;}}
+  footer a{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px;}
+  footer a:hover{text-decoration-color:var(--ink-400);}
+  footer ul{margin:0;padding-left:16px;}
+  footer li{margin-bottom:4px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+
+<header class="site">
+  <div class="wrap">
+    <div class="site-top">
+      <div class="wordmark">
+        <div class="mark">FT</div>
+        <h1>FreeTradeAgreement<span class="tld">.eu</span></h1>
+      </div>
+      <div class="site-tagline">EU–India FTA · industry by industry</div>
+    </div>
+    <p class="lede">
+      A working reference for the <strong>EU–India Free Trade Agreement</strong>, concluded 26 January 2026.
+      Pick a point of view to see how each sector's tariff situation changes — and when.
+      Built to grow as the negotiated legal texts and ratification timeline become public.
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="num mono">~90%</div><div class="lbl">of tariff lines cut or eliminated</div></div>
+      <div class="stat"><div class="num mono">€4bn</div><div class="lbl">in annual duty savings for EU exporters</div></div>
+      <div class="stat"><div class="num mono">107.6%</div><div class="lbl">projected rise in EU exports to India by 2032</div></div>
+      <div class="stat"><div class="num mono">2.0bn</div><div class="lbl">people covered — largest FTA either side has signed</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap controls-row">
+    <span class="pov-label">Point of view</span>
+    <div class="pov-toggle" role="group" aria-label="Choose point of view">
+      <button data-pov="india" class="active" aria-pressed="true">India</button>
+      <button data-pov="eu" aria-pressed="false">EU</button>
+    </div>
+
+    <div class="country-select-wrap" id="countryWrap">
+      <select class="country-select" id="countrySelect" aria-label="Choose EU member state"></select>
+    </div>
+
+    <label class="focus-toggle" id="focusToggle">
+      <input type="checkbox" id="focusCheckbox">
+      <span id="focusLabel">Focus on this country's sectors</span>
+    </label>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--status-good)"></span>Immediate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--status-phased)"></span>Phased</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--status-tbc)"></span>Timing TBC</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--status-protected)"></span>Protected</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="country-note" id="countryNote"></div>
+</div>
+
+<main class="wrap" id="main"></main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <h3>Sources</h3>
+      <ul>
+        <li><a href="https://commission.europa.eu/topics/trade/eu-india-trade-agreement_en" target="_blank" rel="noopener">European Commission — EU-India Trade Agreement overview</a></li>
+        <li><a href="https://kpmg.com/us/en/taxnewsflash/news/2026/01/eu-india-conclude-negotiations-fta.html" target="_blank" rel="noopener">KPMG — EU and India conclude FTA negotiations</a></li>
+        <li><a href="https://intellectual-property-helpdesk.ec.europa.eu/news-events/news/eu-india-free-trade-agreement-concluded-major-global-trade-milestone-2026-01-29_en" target="_blank" rel="noopener">EU IP Helpdesk — FTA concluded, milestone briefing</a></li>
+        <li><a href="https://www.tribuneindia.com/news/business/fta-to-boost-indian-textiles-pharma-chemicals-agri-exports-as-eu-remains-key-trade-partner-icra/" target="_blank" rel="noopener">The Tribune / ICRA — sector impact on Indian exporters</a></li>
+        <li><a href="https://www.kingsresearch.com/blog/eu-india-fta-pharma-textiles" target="_blank" rel="noopener">Kings Research — pharma, textiles &amp; electronics impact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Reading this page</h3>
+      <p style="margin:0 0 10px;">
+        Figures with a full percentage-to-percentage chart come from named tariff numbers in current reporting.
+        Cards marked <b style="color:var(--ink-600)">timing TBC</b> report a direction of travel without an official
+        schedule — treat those as provisional until the EU–India legal texts are published. Country relevance
+        is illustrative: the EU negotiates tariffs as one bloc, so rates don't vary by member state — the country
+        view highlights where each economy's own export strengths overlap with the deal.
+      </p>
+      <p style="margin:0;">Compiled 4 Sep 2026 for Vijay's EU–India Deal project · living document, updated as new detail becomes public.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+
+  // ---------------------------------------------------------------
+  // Data. Direction: 'india' = tariff India's goods face entering the EU
+  //                  'eu'    = tariff EU's goods face entering India
+  //                  'both'  = reported for both directions
+  // status: 'immediate' | 'phased' | 'tbc' | 'protected'
+  // now/future are percentages; null when no figure is published yet.
+  // ---------------------------------------------------------------
+  var industries = [
+    // ---- Immediate on entry into force ----
+    {
+      id:'textiles', name:'Textiles & Apparel', hs:'HS 50–63', dir:'india', status:'immediate',
+      now:12, future:0, timing:'Immediate',
+      body:'Most EU duties on Indian textiles and apparel fall away at entry into force, putting Indian exporters on more even footing with Bangladesh and Vietnam in their largest single market.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'chemicals', name:'Chemicals', hs:'HS 28–38', dir:'both', status:'immediate',
+      now:22, future:0, timing:'Immediate',
+      body:'Duties as high as 22% are largely removed on entry into force in both directions. India already supplies roughly a quarter of the EU’s organic chemical imports.',
+      priority:'Offensive interest for both sides'
+    },
+    {
+      id:'pharma', name:'Pharmaceuticals & Medical Devices', hs:'HS 30', dir:'both', status:'immediate',
+      now:11, future:0, timing:'Immediate / near-immediate',
+      body:'India’s pharma exports to the EU (about $5.8bn, ~12% of its total pharma exports) move toward near-zero duty; EU tariffs on bulk drugs and medical devices into India fall in step.',
+      priority:'Offensive interest for both sides'
+    },
+    {
+      id:'electronics', name:'Electronics', hs:'HS 85', dir:'india', status:'immediate',
+      now:14, future:0.5, timing:'Rapid — 99.6% of lines',
+      body:'Duties fall from roughly 14% to zero on about 99.6% of export lines, covering both finished electronics and components — a strong lift for India’s electronics manufacturing services sector.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'ceramics', name:'Ceramics', hs:'HS 69', dir:'india', status:'immediate', qual:true, timing:'Immediate',
+      body:'Most tariffs on Indian ceramics are eliminated at entry into force, alongside the broader immediate cuts for labour-intensive manufactured goods.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'boats', name:'Boats & Small Vessels', hs:'HS 89', dir:'india', status:'immediate', qual:true, timing:'Immediate',
+      body:'Tariffs are largely removed immediately, part of the same first wave of cuts covering ceramics and other manufactured goods.',
+      priority:'India offensive interest'
+    },
+
+    // ---- Phased over time ----
+    {
+      id:'cars', name:'Automobiles', hs:'HS 87', dir:'eu', status:'phased',
+      now:110, future:10, timing:'Gradual, multi-year',
+      body:'India’s tariff on EU-built cars — among the highest in the world — steps down from 110% to as low as 10%. This is the single largest headline cut in the deal, but the longest to land in full.',
+      priority:'EU offensive interest'
+    },
+    {
+      id:'autoparts', name:'Auto Parts', hs:'HS 87', dir:'eu', status:'phased',
+      now:null, future:0, timing:'5–10 years to full elimination',
+      body:'Component tariffs are eliminated in stages, reaching zero within five to ten years of entry into force.',
+      priority:'EU offensive interest'
+    },
+    {
+      id:'machinery', name:'Machinery', hs:'HS 84', dir:'eu', status:'phased',
+      now:null, future:0, timing:'Mostly immediate, remainder up to 10 years',
+      body:'Most machinery tariffs are eliminated early; the remaining lines phase out over as long as ten years. Also a route for Indian engineering exports into the EU.',
+      priority:'Offensive interest for both sides'
+    },
+    {
+      id:'cosmetics', name:'Cosmetics', hs:'HS 33', dir:'eu', status:'phased',
+      now:22, future:0, timing:'5–7 years',
+      body:'Duties of up to 22% on EU cosmetics and personal care goods phase out over five to seven years.',
+      priority:'EU offensive interest'
+    },
+    {
+      id:'beverages', name:'Non-Alcoholic Beverages & Juices', hs:'HS 22 / 20', dir:'eu', status:'phased',
+      now:55, future:0, timing:'5 years',
+      body:'Some of the steepest cuts in the deal: duties as high as 55% on EU juices and non-alcoholic beer step down to zero over five years.',
+      priority:'EU offensive interest'
+    },
+    {
+      id:'oliveoil', name:'Wine, Spirits & Olive Oil', hs:'HS 15 / 22', dir:'eu', status:'phased',
+      now:null, future:0, timing:'Olive oil: 5 years · wine & spirits: schedule pending',
+      body:'Olive oil duties reduce over five years; wine, spirits and other processed agricultural goods are also named as gaining access, though their exact schedule is not yet public.',
+      priority:'EU offensive interest'
+    },
+    {
+      id:'sheep', name:'Sheep Meat', hs:'HS 02', dir:'eu', status:'phased', qual:true,
+      timing:'Progressive, period unspecified',
+      body:'Duties reduce progressively over time; current reporting does not give an exact number of years.',
+      priority:'EU offensive interest'
+    },
+
+    // ---- Reported gains, timing not yet public ----
+    {
+      id:'fisheries', name:'Fisheries & Marine Products', hs:'HS 03', dir:'india', status:'tbc', qual:true,
+      timing:'Timing TBC',
+      body:'Tariff cuts of up to 26% are reported for Indian marine exports, supporting coastal employment — but the phase-in schedule hasn’t been detailed yet.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'steel', name:'Engineering Goods & Steel', hs:'HS 72–73', dir:'india', status:'tbc', qual:true,
+      timing:'Timing TBC',
+      body:'Iron, steel and engineering exports gain improved access, but finished steel still runs into the EU’s separate Carbon Border Adjustment Mechanism — worth flagging in any company-facing content.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'leather', name:'Leather, Footwear, Furniture & Rubber', hs:'HS 41–42 / 64', dir:'india', status:'tbc', qual:true,
+      timing:'Timing TBC',
+      body:'These labour-intensive sectors are named as gaining from the deal; exact tariff figures and staging aren’t published yet.',
+      priority:'India offensive interest'
+    },
+    {
+      id:'agri', name:'Tea, Coffee, Spices, Fruit & Vegetables', hs:'HS 09', dir:'india', status:'tbc', qual:true,
+      timing:'Timing TBC',
+      body:'Preferential market access is confirmed for these categories; specific tariff-line detail is pending the published legal text.',
+      priority:'India offensive interest'
+    },
+
+    // ---- Protected / limited change ----
+    {
+      id:'india-protect', name:'Dairy, Cereals & Poultry', hs:'HS 04 / 10 / 02', dir:'eu', status:'protected', qual:true,
+      timing:'Protected',
+      body:'India keeps these largely outside the concessions to shield domestic farmers and MSMEs — EU dairy, grain and poultry exporters see little to no improvement here.',
+      priority:'Shielded by India'
+    },
+    {
+      id:'eu-protect', name:'Sugar, Ethanol, Rice, Beef & Dairy', hs:'HS 17 / 22 / 10 / 02 / 04', dir:'india', status:'protected', qual:true,
+      timing:'Protected',
+      body:'The EU keeps these sensitive categories largely outside the deal and maintains its own food-safety standards throughout — Indian exporters shouldn’t expect material change here.',
+      priority:'Shielded by the EU'
+    }
+  ];
+
+  var groupDefs = [
+    { key:'immediate', title:'Immediate on entry into force', desc:'Duties fall away as soon as the agreement takes effect' },
+    { key:'phased', title:'Phased in over time', desc:'Duties step down on a published multi-year schedule' },
+    { key:'tbc', title:'Gains reported, schedule not yet public', desc:'Direction is confirmed; the exact tariff schedule isn’t published yet' },
+    { key:'protected', title:'Protected / limited change', desc:'Sensitive sectors both sides have shielded from concessions' }
+  ];
+
+  var countries = [
+    { code:'DE', name:'Germany', cards:['cars','autoparts','machinery','chemicals'], why:'Europe’s largest car and machinery exporter — the automobile and machinery phase-ins are the headline story for German industry.' },
+    { code:'FR', name:'France', cards:['oliveoil','cosmetics','machinery'], why:'Wine, spirits and cosmetics are core French export categories; machinery and aerospace-adjacent goods matter too.' },
+    { code:'IT', name:'Italy', cards:['oliveoil','cosmetics','machinery'], why:'Olive oil, wine and machinery are long-standing Italian strengths in the Indian market.' },
+    { code:'NL', name:'Netherlands', cards:['chemicals','machinery'], why:'A major chemicals and machinery trading hub, with re-export flows into India via Dutch ports.' },
+    { code:'ES', name:'Spain', cards:['oliveoil','cars','chemicals'], why:'The world’s largest olive oil producer, with a sizeable automotive manufacturing base.' },
+    { code:'BE', name:'Belgium', cards:['chemicals','pharma'], why:'Chemicals and pharmaceuticals dominate Belgium’s export profile into fast-growing markets like India.' },
+    { code:'IE', name:'Ireland', cards:['pharma'], why:'Pharmaceuticals and medical devices are the backbone of Irish exports — the near-zero tariff move here is significant.' },
+    { code:'SE', name:'Sweden', cards:['machinery','cars','pharma'], why:'Industrial machinery, automotive and pharma are Sweden’s traditional strengths in the Indian market.' },
+    { code:'PL', name:'Poland', cards:['autoparts','machinery'], why:'A major auto-parts and machinery supplier within EU manufacturing chains reaching into India.' },
+    { code:'DK', name:'Denmark', cards:['pharma','machinery','india-protect'], why:'Pharma and industrial pumps/machinery are Danish strengths — though Denmark’s dairy exporters remain on the protected side of the deal.' }
+  ];
+
+  // ---------------------------------------------------------------
+  // Chart: independent-scale dumbbell (now -> future), 0..niceMax
+  // ---------------------------------------------------------------
+  function niceCeil(v){
+    if (v <= 20) return 20;
+    if (v <= 60) return 60;
+    if (v <= 120) return 120;
+    return Math.ceil(v/40)*40;
+  }
+  function dumbbellSvg(now, future, status){
+    var max = niceCeil(Math.max(now, future, 1) * 1.05);
+    var x0 = 14, x1 = 294, y = 28;
+    function xOf(v){ return x0 + (v/max) * (x1-x0); }
+    var xNow = xOf(now), xFuture = xOf(future);
+    var lineColor = status === 'phased' ? 'var(--status-phased)' : 'var(--status-good)';
+    var ticks = [0, max/2, max];
+    var tickEls = ticks.map(function(t){
+      var x = xOf(t);
+      var anchor = t === 0 ? 'start' : (t === max ? 'end' : 'middle');
+      return '<line x1="'+x+'" y1="'+(y+12)+'" x2="'+x+'" y2="'+(y+16)+'" stroke="var(--line)" stroke-width="1"/>' +
+             '<text x="'+x+'" y="'+(y+27)+'" font-family="IBM Plex Mono" font-size="9.5" fill="var(--ink-400)" text-anchor="'+anchor+'">'+Math.round(t)+'%</text>';
+    }).join('');
+    return '' +
+      '<svg viewBox="0 0 308 62" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Tariff now '+now+'%, future '+future+'%">' +
+        '<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>' +
+        '<line x1="'+xNow+'" y1="'+y+'" x2="'+xFuture+'" y2="'+y+'" stroke="'+lineColor+'" stroke-width="2.5"/>' +
+        '<text x="'+xNow+'" y="'+(y-10)+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="var(--ink-600)" text-anchor="middle">'+now+'%</text>' +
+        '<circle cx="'+xNow+'" cy="'+y+'" r="5.5" fill="var(--ink-600)"/>' +
+        '<text x="'+xFuture+'" y="'+(y-10)+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="'+lineColor+'" text-anchor="middle">'+future+'%</text>' +
+        '<circle cx="'+xFuture+'" cy="'+y+'" r="5.5" fill="'+lineColor+'" stroke="var(--paper-raised)" stroke-width="2"/>' +
+        tickEls +
+      '</svg>';
+  }
+
+  var pillMap = { immediate:'good', phased:'phased', tbc:'tbc', protected:'protected' };
+  var pillLabel = { immediate:'Immediate', phased:'Phased', tbc:'Timing TBC', protected:'Protected' };
+
+  function cardHtml(item, dimmed, emph){
+    var cls = 'card' + (dimmed?' dim':'') + (emph?' emph':'');
+    var flowLabel = item.dir === 'india' ? 'India → EU' : (item.dir === 'eu' ? 'EU → India' : 'Both directions');
+    var flowClass = item.dir;
+    var chart = '';
+    if (!item.qual && item.now !== null && item.future !== null){
+      var futureColor = item.status === 'phased' ? 'var(--status-phased)' : 'var(--status-good)';
+      chart = '<div class="chart-wrap">' + dumbbellSvg(item.now, item.future, item.status) + '</div>' +
+              '<div class="chart-caption">' +
+                '<span><span class="dot" style="background:var(--ink-600)"></span>Now</span>' +
+                '<span><span class="dot" style="background:'+futureColor+'"></span>After phase-in</span>' +
+              '</div>';
+    }
+    var timingBlock;
+    if (chart){
+      timingBlock = '<div class="timing-row"><span class="pill '+pillMap[item.status]+'">'+item.timing+'</span><span class="card-priority">'+item.priority+'</span></div>';
+    } else {
+      timingBlock = '<div class="qual-status"><span class="pill '+pillMap[item.status]+'">'+pillLabel[item.status]+'</span><span class="card-priority">'+item.timing+'</span></div>' +
+                    '<div class="card-priority" style="margin-top:4px;">'+item.priority+'</div>';
+    }
+    return (
+      '<div class="'+cls+'" data-id="'+item.id+'">' +
+        '<div class="card-top">' +
+          '<div class="card-title"><span class="hs-tag">'+item.hs+'</span><h3>'+item.name+'</h3></div>' +
+          '<span class="flow-tag '+flowClass+'">'+flowLabel+'</span>' +
+        '</div>' +
+        '<div class="card-body">'+item.body+'</div>' +
+        chart +
+        timingBlock +
+      '</div>'
+    );
+  }
+
+  // ---------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------
+  var state = { pov:'india', country:'DE', focus:false };
+
+  var countrySelect = document.getElementById('countrySelect');
+  countries.forEach(function(c){
+    var opt = document.createElement('option');
+    opt.value = c.code; opt.textContent = c.name;
+    countrySelect.appendChild(opt);
+  });
+
+  function relevantForPov(item){
+    if (state.pov === 'india') return item.dir === 'india' || item.dir === 'both';
+    return item.dir === 'eu' || item.dir === 'both';
+  }
+
+  function render(){
+    var main = document.getElementById('main');
+    main.innerHTML = '';
+
+    var country = countries.filter(function(c){return c.code === state.country;})[0];
+
+    groupDefs.forEach(function(g){
+      var items = industries.filter(function(it){ return it.status === g.key && relevantForPov(it); });
+      if (!items.length) return;
+
+      var section = document.createElement('div');
+      section.className = 'group';
+      var head = document.createElement('div');
+      head.className = 'group-head';
+      head.innerHTML = '<h2>'+g.title+'</h2><span class="group-count mono">'+items.length+'</span><span class="group-desc">'+g.desc+'</span>';
+      section.appendChild(head);
+
+      var grid = document.createElement('div');
+      grid.className = 'card-grid';
+      items.forEach(function(it){
+        var dimmed = false, emph = false;
+        if (state.pov === 'eu' && state.focus && country){
+          var relevant = country.cards.indexOf(it.id) !== -1;
+          dimmed = !relevant;
+          emph = relevant;
+        }
+        grid.insertAdjacentHTML('beforeend', cardHtml(it, dimmed, emph));
+      });
+      section.appendChild(grid);
+      main.appendChild(section);
+    });
+  }
+
+  function renderCountryNote(){
+    var note = document.getElementById('countryNote');
+    if (state.pov !== 'eu'){ note.classList.remove('shown'); return; }
+    var country = countries.filter(function(c){return c.code === state.country;})[0];
+    if (!country){ note.classList.remove('shown'); return; }
+    note.innerHTML = '<b>Why this matters for '+country.name+':</b> '+country.why+
+      '<span class="fine">Illustrative — the EU sets tariffs as a single bloc, so rates don’t vary by member state. This reflects '+country.name+'’s typical export strengths, not country-specific terms.</span>';
+    note.classList.add('shown');
+  }
+
+  function updateControlsVisibility(){
+    document.getElementById('countryWrap').classList.toggle('shown', state.pov === 'eu');
+    document.getElementById('focusToggle').classList.toggle('shown', state.pov === 'eu');
+    var country = countries.filter(function(c){return c.code === state.country;})[0];
+    document.getElementById('focusLabel').textContent = 'Focus on ' + (country ? country.name : 'this country') + '’s sectors';
+  }
+
+  document.querySelectorAll('.pov-toggle button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.pov = btn.getAttribute('data-pov');
+      document.querySelectorAll('.pov-toggle button').forEach(function(b){
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+      });
+      updateControlsVisibility();
+      renderCountryNote();
+      render();
+    });
+  });
+
+  countrySelect.value = state.country;
+  countrySelect.addEventListener('change', function(){
+    state.country = countrySelect.value;
+    updateControlsVisibility();
+    renderCountryNote();
+    render();
+  });
+
+  document.getElementById('focusCheckbox').addEventListener('change', function(e){
+    state.focus = e.target.checked;
+    render();
+  });
+
+  updateControlsVisibility();
+  render();
+})();
+</script>
