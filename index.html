@@ -648,7 +648,7 @@
   }
   function dumbbellSvg(now, future, status){
     var max = niceCeil(Math.max(now, future, 1) * 1.05);
-    var x0 = 14, x1 = 294, y = 28;
+    var x0 = 14, x1 = 294, y = 40, yArrow = 11, yLabel = y - 10;
     function xOf(v){ return x0 + (v/max) * (x1-x0); }
     var xNow = xOf(now), xFuture = xOf(future);
     var lineColor = status === 'phased' ? 'var(--status-phased)' : 'var(--status-good)';
@@ -659,13 +659,22 @@
       return '<line x1="'+x+'" y1="'+(y+12)+'" x2="'+x+'" y2="'+(y+16)+'" stroke="var(--line)" stroke-width="1"/>' +
              '<text x="'+x+'" y="'+(y+27)+'" font-family="IBM Plex Mono" font-size="9.5" fill="var(--ink-400)" text-anchor="'+anchor+'">'+Math.round(t)+'%</text>';
     }).join('');
+    // Direction arrow floats above the scale (not touching it), pointing from "now" to "after phase-in"
+    var arrowEls = '';
+    if (xFuture !== xNow){
+      var dir = xFuture > xNow ? 1 : -1;
+      var tipX = xFuture, baseX = xFuture - dir*7;
+      arrowEls =
+        '<line x1="'+xNow+'" y1="'+yArrow+'" x2="'+baseX+'" y2="'+yArrow+'" stroke="'+lineColor+'" stroke-width="2" stroke-linecap="round"/>' +
+        '<polygon points="'+tipX+','+yArrow+' '+baseX+','+(yArrow-4)+' '+baseX+','+(yArrow+4)+'" fill="'+lineColor+'"/>';
+    }
     return '' +
-      '<svg viewBox="0 0 308 62" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Tariff now '+now+'%, future '+future+'%">' +
+      '<svg viewBox="0 0 308 74" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Tariff now '+now+'%, future '+future+'%">' +
+        arrowEls +
         '<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>' +
-        '<line x1="'+xNow+'" y1="'+y+'" x2="'+xFuture+'" y2="'+y+'" stroke="'+lineColor+'" stroke-width="2.5"/>' +
-        '<text x="'+xNow+'" y="'+(y-10)+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="var(--ink-600)" text-anchor="middle">'+now+'%</text>' +
+        '<text x="'+xNow+'" y="'+yLabel+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="var(--ink-600)" text-anchor="middle">'+now+'%</text>' +
         '<circle cx="'+xNow+'" cy="'+y+'" r="5.5" fill="var(--ink-600)"/>' +
-        '<text x="'+xFuture+'" y="'+(y-10)+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="'+lineColor+'" text-anchor="middle">'+future+'%</text>' +
+        '<text x="'+xFuture+'" y="'+yLabel+'" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="'+lineColor+'" text-anchor="middle">'+future+'%</text>' +
         '<circle cx="'+xFuture+'" cy="'+y+'" r="5.5" fill="'+lineColor+'" stroke="var(--paper-raised)" stroke-width="2"/>' +
         tickEls +
       '</svg>';
